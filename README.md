@@ -19,9 +19,13 @@ This is a discord selfbot written in javascript using the discord.js library
 
 
 ## Install
-'''
+```
 npm install discord.js
+
 git clone https://github.com/Static-Dragon/Selfbot.git
+
 <add your key to config.json>
+
 node selfbot.js
-'''
+
+```

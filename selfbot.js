@@ -7,7 +7,7 @@ Client.on("ready", () => {
 });
 
 Client.on("message", (msg) => {
-	if (msg.author == Client.user && String(msg).match(config.prefix)) {	
+	if (msg.author == Client.user && String(msg).match(config.prefix) && ! String(msg).match(/http(s)?/g)) {	
 		let cmdList = new Map([
 		["lenny", config.pastas[0]],
 		["linux", config.pastas[1]],

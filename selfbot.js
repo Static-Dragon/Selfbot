@@ -35,76 +35,40 @@ Client.on("message", (msg) => {
 Client.login(config.botToken);
 
 function emojify(msg) {
+	let emojiList = new Map([
+		["-",":heavy_minus_sign:"],
+		["!",":exclamation:"],
+		["?",":question:"],
+		[".",":red_circle:"],
+		[" "," "],
+		["0",':zero:'],
+		["1",':one:'],
+		["2",':two:'],
+		["3",':three:'],
+		["4",':four:'],
+		["5",':five:'],
+		["6",':six:'],
+		["7",':seven:'],
+		["8",':eight:'],
+		["9",':nine:']
+	]);
 	var msgTmp = msg.toLowerCase();
 	msgTmp = msgTmp.replace(/\/emojify\s/g,"");
 	let arr = msgTmp.split(/(?!$)/u);
 	var emoji = new Array(arr.length);
 	for (i=0; i<arr.length;i++){
-		if(arr[i] === " "){
+		if(arr[i] != " "){
+			if (/[a-z]/i.test(arr[i])) {
+				arr[i] = ":regional_indicator_" + arr[i].toLowerCase() + ":";
+			} else if(emojiList.has(arr[i])){
+				arr[i] = emojiList.get(arr[i]);
+			} else { 
+				log("Unkown Symbol \""+arr[i]+"\"");
+			}
+			emoji[i] = ":ok_woman::skin-tone-" + Math.floor((Math.random() * 5) + 1) + ":";
+		} else {
 			arr[i] = " ";
 			emoji[i] = " ";
-		}else if(arr[i].match(/(\W|\d)/g)) {
-			switch(arr[i]) {
-				case "-":
-					arr[i] = ":heavy_minus_sign:";
-					emoji[i] = ":ok_woman::skin-tone-" + Math.floor((Math.random() * 5) + 1) + ":";
-					break;
-				case "!":
-					arr[i] = ":exclamation:",
-					emoji[i] = ":ok_woman::skin-tone-" + Math.floor((Math.random() * 5) + 1) + ":";
-					break;
-				case "?":
-					arr[i] = ":question:",
-					emoji[i] = ":ok_woman::skin-tone-" + Math.floor((Math.random() * 5) + 1) + ":";
-					break;
-				case ".":
-					arr[i] = ":red_circle:"
-					emoji[i] = ":ok_woman::skin-tone-" + Math.floor((Math.random() * 5) + 1) + ":";
-					break;
-				case "1":
-					arr[i] = ":one:"
-					emoji[i] = ":ok_woman::skin-tone-" + Math.floor((Math.random() * 5) + 1) + ":";
-					break;
-				case "2":
-					arr[i] = ":two:"
-					emoji[i] = ":ok_woman::skin-tone-" + Math.floor((Math.random() * 5) + 1) + ":";
-					break;
-				case "3":
-					arr[i] = ":three:"
-					emoji[i] = ":ok_woman::skin-tone-" + Math.floor((Math.random() * 5) + 1) + ":";
-					break;
-				case "4":
-					arr[i] = ":four:"
-					emoji[i] = ":ok_woman::skin-tone-" + Math.floor((Math.random() * 5) + 1) + ":";
-					break;
-				case "5":
-					arr[i] = ":five:"
-					emoji[i] = ":ok_woman::skin-tone-" + Math.floor((Math.random() * 5) + 1) + ":";
-					break;
-				case "6":
-					arr[i] = ":six:"
-					emoji[i] = ":ok_woman::skin-tone-" + Math.floor((Math.random() * 5) + 1) + ":";
-					break;
-				case "7":
-					arr[i] = ":seven:"
-					emoji[i] = ":ok_woman::skin-tone-" + Math.floor((Math.random() * 5) + 1) + ":";
-					break;
-				case "8":
-					arr[i] = ":eight:"
-					emoji[i] = ":ok_woman::skin-tone-" + Math.floor((Math.random() * 5) + 1) + ":";
-					break;
-				case "9":
-					arr[i] = ":nine:"
-					emoji[i] = ":ok_woman::skin-tone-" + Math.floor((Math.random() * 5) + 1) + ":";
-					break;
-				case "0":
-					arr[i] = ":zero:"
-					emoji[i] = ":ok_woman::skin-tone-" + Math.floor((Math.random() * 5) + 1) + ":";
-					break;
-			}
-		} else {
-			arr[i] = ":regional_indicator_" + arr[i] + ":";
-			emoji[i] = ":ok_woman::skin-tone-" + Math.floor((Math.random() * 5) + 1) + ":";
 		}
 	}
 	return arr.join(" ") + "\n" + emoji.join(" ");

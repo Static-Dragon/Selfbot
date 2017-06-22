@@ -1,25 +1,25 @@
 const config = require("./config.json");
+var fs = require("fs");
+var contents = fs.readFileSync("values.json")
+var json = JSON.parse(contents)
 const Discord = require("discord.js");
 const Client = new Discord.Client();
 
+var fs = require("fs");
+
+
 Client.on("ready", () => {
-	log(`Logged in as user ${Client.user.username}!`);
+	log(`Logged in as user ${Client.user.username}!`,false);
+	msg = "test";
 });
 
 Client.on("message", (msg) => {
 	if (msg.author == Client.user && String(msg).match(config.prefix) && ! String(msg).match(/http(s)?/g) && ! String(msg).match(/``` (\w+|\d+|\s+) ```/)) {	
 		let cmdList = new Map([
-		["lenny", config.pastas[0]],
-		["linux", config.pastas[1]],
-		["navy",  config.pastas[2]],
-		["rust",  config.pastas[3]],
-		["fallen", config.react[0]],
-		["ooh", config.react[1]],
-		["triggered",config.react[2]],
-		["oops",config.react[3]],
-		["ree",config.react[4]],
 		["emojify", emojify(String(msg))],
-		["code", code(String(msg))]
+		["code", code(String(msg))],
+		["react", react(String(msg))],
+		["pasta", copypasta(String(msg))]
 		]);
 		var matches = String(msg).match(/\/(?!\/)\w+/g);
 		var msgTmp = String(msg);
@@ -30,34 +30,39 @@ Client.on("message", (msg) => {
 			msg.edit(msgTmp.replace(/[^:]*$/g,""))
 		} else if (matches[0] === "/code") {
 			msg.edit(msgTmp.replace(/[^```]*$/g,""));
+		} else if (matches[0] === "/react") {
+			msg.edit(msgTmp.replace(/[^\s]*$/,""));
 		} else {
 			msg.edit(msgTmp);
 		}
+		
 		
 	} else {
 		return;
 	}
 });
 
+
+function copypasta(msg){
+	if(String(msg).indexOf(config.prefix + "pasta") != -1) {
+		var msgTmp = String(msg).replace(config.prefix + "pasta ","");
+		if(json.copypastas.hasOwnProperty(msgTmp)){
+			return(String(eval("json.copypastas"+"[\""+msgTmp+"\"]")));
+		}
+	}
+}
+
+function react(msg){
+	if(String(msg).indexOf(config.prefix + "react") != -1) {
+		var msgTmp = String(msg).replace(config.prefix + "react ","");
+		if(json.react.hasOwnProperty(msgTmp)){
+			return(eval("json.react"+"[\""+msgTmp+"\"]"));
+		}
+	}
+}
+
 function emojify(msg) {
-	if(String(msg).match(/\/(?!\/)\w+/g)[0] === "/emojify") {
-		let emojiList = new Map([
-			["-",":heavy_minus_sign:"],
-			["!",":exclamation:"],
-			["?",":question:"],
-			[".",":red_circle:"],
-			[" "," "],
-			["0",':zero:'],
-			["1",':one:'],
-			["2",':two:'],
-			["3",':three:'],
-			["4",':four:'],
-			["5",':five:'],
-			["6",':six:'],
-			["7",':seven:'],
-			["8",':eight:'],
-			["9",':nine:']
-		]);
+	if(String(msg).indexOf(config.prefix + "emojify") != -1) {
 		var msgTmp = msg.toLowerCase();
 		msgTmp = msgTmp.replace(/\/emojify\s/g,"");
 		let arr = msgTmp.split(/(?!$)/u);
@@ -66,8 +71,8 @@ function emojify(msg) {
 			if(arr[i] != " "){
 				if (/[a-z]/i.test(arr[i])) {
 					arr[i] = ":regional_indicator_" + arr[i].toLowerCase() + ":";
-				} else if(emojiList.has(arr[i])){
-					arr[i] = emojiList.get(arr[i]);
+				} else if(json.emojis.hasOwnProperty(arr[i])){
+					arr[i] = eval("json.emojis"+"[\""+arr[i]+"\"]");
 				} else { 
 					log("Unkown Symbol \""+arr[i]+"\"");
 				}
@@ -82,24 +87,13 @@ function emojify(msg) {
 }
 
 function code(msg) {
-	if(String(msg).match(/\/(?!\/)\w+/g)[0] === "/code") {
-		let codeList = new Map([
-		["java", "java"],
-		["markdown", "markdown"],
-		["html", "html"],
-		["css", "css"],
-		["c#","cs"],
-		["js","js"],
-		["json","json"],
-		["",""]
-		]);
-		
-		var msgTmp = String(msg).replace(/\/code\s/,"");
+	if(String(msg).indexOf(config.prefix + "code") != -1) {
+		var msgTmp = String(msg).replace(config.prefix + "code ","");
 		var lang = msgTmp.match(/\:(\w+)\:/);
-		msgTmp = msgTmp.replace(/\/code:\w+:/,"");
+		msgTmp = msgTmp.replace(config.prefix+"code"+lang[0],"");
 		if(typeof lang != "undefined" && lang != null && lang.length > 0){
-			if(codeList.has(lang[1])){
-				return "```" + codeList.get(lang[1]) + "\n" + msgTmp + "\n ```";
+			if(json.languages.hasOwnProperty(lang[1])){
+				return "```" + eval("json.languages."+lang[1]) + "\n" + msgTmp + "\n ```";
 			} else {
 				return "```\n" + msgTmp + "\n ```";
 			}
@@ -107,7 +101,7 @@ function code(msg) {
 	}
 }
 
-function log(msg) {
+function log(msg,debug) {
 	var now = new Date();
 	var date = [ now.getMonth() + 1, now.getDate(), now.getFullYear() ];
 	var time = [ now.getHours(), now.getMinutes(), now.getSeconds() ];
@@ -119,7 +113,12 @@ function log(msg) {
 		  time[i] = "0" + time[i];
 		}
 	}
+	if(debug){
 	console.log(date.join("/") + " " + time.join(":") + " " + suffix + " : " + msg + "\n");
+	return;
+	} else {
+	console.log(date.join("/") + " " + time.join(":") + " " + suffix + " : " + msg + "\n");
+	}
 }
 
 Client.login(config.botToken);

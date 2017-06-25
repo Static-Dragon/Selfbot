@@ -2,7 +2,7 @@
 
 ## About
 
-This is a discord selfbot written in javascript using the discord.js library
+This is a discord selfbot written in javascript and JSON for values using the discord.js library
 
 ### Commands
 

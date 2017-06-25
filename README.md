@@ -8,30 +8,9 @@ This is a discord selfbot written in javascript using the discord.js library
 
 
 /emojify - takes a string and returns an emoji-delimited copy
-
-#### copypastas
-/ree - pepe reaction gif
-
-
-/ooh - jontron reaction video
-
-
-/fallen - jontron video
-
-
-/triggered - h3h3 triggered
-
-
-/linux - GNU/Linux copypasta
-
-
-/lenny - lenny face
-
-
-/navy - navy seal copypasta
-
-
-/rust - rust programming language copypasta
+/react - takes an argument, and returns the appropriate image/video macro (see values.json for more)
+/code - takes langauge as an arg, and formats the following text as code of that language
+/pasta - takes an argument, and returns the appropriate copypasta (see values.json for more)
 
 
 ## Install
